@@ -1094,257 +1094,532 @@ export default function DisciplineDashboardResponsive() {
     // reset input value so same file can be imported again
     e.target.value = "";
   };
+return (
+  <ThemeProviderContext.Provider value={theme}>
+    <ThemeProvider theme={theme}>
+      <GlobalStyle />
+      {isOffline && <OfflineBadge>Offline mode</OfflineBadge>}
 
-  return (
-    <ThemeProviderContext.Provider value={theme}>
-      <ThemeProvider theme={theme}>
-        <GlobalStyle />
-        {isOffline && <OfflineBadge>Offline mode</OfflineBadge>}
-        <AppContainer>
-{/* Header */}
-<GlassCard
-  style={{
-    position: "sticky",
-    top: 0,
-    zIndex: 1000,
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "stretch",
-    gap: 12,
-    width: "100%",
-    maxWidth: "var(--max-width)",
-    padding: "16px 20px",
-  }}
->
-  {/* Logo + Title Row */}
-  <div
-    style={{
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      flexWrap: "wrap",
-      gap: 12,
-    }}
-  >
-    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-      <div
-        style={{
-          width: 40,
-          height: 40,
-          borderRadius: 10,
-          background: "linear-gradient(90deg,#00c6ff,#0072ff)",
-          flexShrink: 0,
-        }}
-      />
-      <div>
-        <Title>✨ FocusSpace</Title>
-        <Subtitle>Your all-in-one productivity hub</Subtitle>
-      </div>
-    </div>
+      <AppContainer>
+        {/* ===== HEADER ===== */}
+        <GlassCard
+          className="HeaderCard"
+          style={{
+            position: "sticky",
+            top: 0,
+            zIndex: 1000,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "stretch",
+            gap: 14,
+            width: "100%",
+            maxWidth: "var(--max-width)",
+            padding: "18px 22px",
+          }}
+        >
+          {/* Logo + title */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              gap: 12,
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <div
+                style={{
+                  width: 42,
+                  height: 42,
+                  borderRadius: 12,
+                  background: "linear-gradient(90deg,#00c6ff,#0072ff)",
+                  flexShrink: 0,
+                }}
+              />
+              <div>
+                <Title>✨ FocusSpace</Title>
+                <Subtitle>Your all-in-one productivity hub</Subtitle>
+              </div>
+            </div>
 
-    {/* Theme toggle always visible on small screens */}
-    <div className="theme-toggle-mobile" style={{ display: "flex", gap: 8 }}>
-      <IconButton
-        onClick={() => setThemeMode(themeMode === "dark" ? "light" : "dark")}
-        title="Toggle theme"
-      >
-        {themeMode === "dark" ? <FaSun /> : <FaMoon />}
-      </IconButton>
-    </div>
-  </div>
+            <div
+              className="theme-toggle-mobile"
+              style={{ display: "flex", gap: 8 }}
+            >
+              <IconButton
+                onClick={() =>
+                  setThemeMode(themeMode === "dark" ? "light" : "dark")
+                }
+                title="Toggle theme"
+              >
+                {themeMode === "dark" ? <FaSun /> : <FaMoon />}
+              </IconButton>
+            </div>
+          </div>
 
-  {/* Quick Add & Controls */}
-  <div
-    style={{
-      display: "flex",
-      flexWrap: "wrap",
-      gap: 8,
-      alignItems: "center",
-      justifyContent: "space-between",
-      width: "100%",
-    }}
-  >
-    <input
-      id="quick-add-input"
-      placeholder={`Add to "${
-        projects.find(
-          (p) => p.id === (selectedProjectId === "all" ? "inbox" : selectedProjectId)
-        )?.name || "Inbox"
-      }" (Alt+N)`}
-      value={quickText}
-      onChange={(e) => setQuickText(e.target.value)}
-      onKeyDown={(e) => {
-        if (e.key === "Enter") quickAdd();
-      }}
-      style={{
-        flex: "1 1 240px",
-        minWidth: "150px",
-        padding: 10,
-        borderRadius: 8,
-        border: "none",
-        background: theme.inputBg,
-        color: theme.text,
-        fontSize: "0.95rem",
-      }}
-    />
-    <div
-      style={{
-        display: "flex",
-        flexWrap: "wrap",
-        gap: 6,
-        alignItems: "center",
-        justifyContent: "flex-end",
-        flex: "1 1 auto",
-      }}
-    >
-      <Button onClick={quickAdd}>
-        <FaPlus /> Add
-      </Button>
-      <SubtleButton
-        onClick={() => setFilterToday((s) => !s)}
-        style={{ opacity: filterToday ? 1 : 0.65 }}
-      >
-        Today
-      </SubtleButton>
-      <SubtleButton
-        onClick={() => setSortByDue((s) => !s)}
-        style={{ opacity: sortByDue ? 1 : 0.65 }}
-      >
-        Sort: Due
-      </SubtleButton>
-      <IconButton onClick={() => setShowSettings((s) => !s)} title="Settings">
-        <FaCog />
-      </IconButton>
-    </div>
-  </div>
+          {/* Quick Add */}
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 8,
+              alignItems: "center",
+              justifyContent: "space-between",
+              width: "100%",
+            }}
+          >
+            <input
+              id="quick-add-input"
+              placeholder={`Add to "${
+                projects.find(
+                  (p) =>
+                    p.id ===
+                    (selectedProjectId === "all"
+                      ? "inbox"
+                      : selectedProjectId)
+                )?.name || "Inbox"
+              }" (Alt+N)`}
+              value={quickText}
+              onChange={(e) => setQuickText(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && quickAdd()}
+              style={{
+                flex: "1 1 260px",
+                minWidth: "150px",
+                padding: "10px 12px",
+                borderRadius: 8,
+                border: "none",
+                background: theme.inputBg,
+                color: theme.text,
+                fontSize: "0.95rem",
+                outline: "none",
+              }}
+            />
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 6,
+                alignItems: "center",
+                justifyContent: "flex-end",
+                flex: "1 1 auto",
+              }}
+            >
+              <Button onClick={quickAdd}>
+                <FaPlus /> Add
+              </Button>
+              <SubtleButton
+                onClick={() => setFilterToday((s) => !s)}
+                style={{ opacity: filterToday ? 1 : 0.65 }}
+              >
+                Today
+              </SubtleButton>
+              <SubtleButton
+                onClick={() => setSortByDue((s) => !s)}
+                style={{ opacity: sortByDue ? 1 : 0.65 }}
+              >
+                Sort: Due
+              </SubtleButton>
+              <IconButton
+                onClick={() => setShowSettings((s) => !s)}
+                title="Settings"
+              >
+                <FaCog />
+              </IconButton>
+            </div>
+          </div>
+        </GlassCard>
 
-  {/* Responsive tweaks */}
-  <style>{`
-    @media (max-width: 768px) {
-      .theme-toggle-mobile {
-        display: none;
-      }
-      input#quick-add-input {
-        width: 100% !important;
-        flex: 1 1 100%;
-      }
-    }
-  `}</style>
-</GlassCard>
+        {/* ===== MAIN LAYOUT ===== */}
+        <MainLayout className="MainLayout">
+          {/* Sidebar hidden on mobile */}
+          <LeftColumn className="LeftColumn">
+            <ProjectSidebar
+              projects={projects}
+              selectedId={selectedProjectId}
+              onSelect={setSelectedProjectId}
+              onAddProject={addProject}
+              onDeleteProject={deleteProject}
+            />
+          </LeftColumn>
 
+          {/* ===== TASK CENTER ===== */}
+          <CenterColumn className="CenterColumn">
+            <GlassCard
+              style={{
+                padding: "18px 16px",
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+                gap: 10,
+              }}
+            >
+              <h3
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  justifyContent: "space-between",
+                  flexWrap: "wrap",
+                }}
+              >
+                <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <FaTasks /> Tasks
+                </span>
+                <span
+                  style={{
+                    fontSize: 13,
+                    color: theme.subtleText,
+                    fontWeight: 500,
+                  }}
+                >
+                  {filteredTasks.length} total
+                </span>
+              </h3>
 
-          {/* Main Layout */}
-          <MainLayout>
+              {/* Bulk Actions */}
+              <div
+                className="bulk-action-row"
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  alignItems: "center",
+                  gap: 10,
+                  justifyContent: "space-between",
+                  borderTop: `1px solid ${theme.glassBorder}`,
+                  paddingTop: 10,
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: 13,
+                    color: theme.subtleText,
+                    flex: "1 1 auto",
+                    minWidth: 120,
+                  }}
+                >
+                  {selectedTaskIds.length} selected
+                </div>
 
-            <LeftColumn>
-              <ProjectSidebar projects={projects} selectedId={selectedProjectId} onSelect={setSelectedProjectId} onAddProject={addProject} onDeleteProject={deleteProject} />
-            </LeftColumn>
+                <div
+                  style={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: 8,
+                    justifyContent: "flex-end",
+                    flex: "3 1 auto",
+                  }}
+                >
+                  <SubtleButton
+                    onClick={bulkComplete}
+                    disabled={selectedTaskIds.length === 0}
+                  >
+                    <FaCheck /> Complete
+                  </SubtleButton>
+                  <SubtleButton
+                    onClick={bulkDelete}
+                    disabled={selectedTaskIds.length === 0}
+                  >
+                    <FaTrashAlt /> Delete
+                  </SubtleButton>
+                  <SubtleButton
+                    onClick={() => setSelectedTaskIds([])}
+                    disabled={selectedTaskIds.length === 0}
+                  >
+                    Clear
+                  </SubtleButton>
+                  <SubtleButton onClick={undo} disabled={!canUndo}>
+                    <FaUndo /> Undo
+                  </SubtleButton>
+                  <SubtleButton onClick={redo} disabled={!canRedo}>
+                    <FaRedo /> Redo
+                  </SubtleButton>
+                  <SubtleButton onClick={() => exportData()}>
+                    <FaSignOutAlt /> Export
+                  </SubtleButton>
 
-            <CenterColumn>
-              <GlassCard>
-                <h3 style={{ display: 'flex', alignItems: 'center', gap: 8 }}><FaTasks /> Tasks</h3>
+                  <label
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 8,
+                      cursor: "pointer",
+                    }}
+                  >
+                    <SubtleButton as="span">
+                      <FaFileImport /> Import
+                    </SubtleButton>
+                    <input
+                      ref={importFileRef}
+                      type="file"
+                      accept="application/json"
+                      onChange={handleImportChange}
+                      style={{ display: "none" }}
+                    />
+                  </label>
+                </div>
+              </div>
 
-                <Row style={{ marginTop: 8, gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
-                  <div style={{ fontSize: 13, color: theme.subtleText }}>{selectedTaskIds.length} selected</div>
-                  <SubtleButton onClick={bulkComplete} disabled={selectedTaskIds.length === 0}><FaCheck /> Complete</SubtleButton>
-                  <SubtleButton onClick={bulkDelete} disabled={selectedTaskIds.length === 0}><FaTrashAlt /> Delete</SubtleButton>
-                  <SubtleButton onClick={() => setSelectedTaskIds([])} disabled={selectedTaskIds.length === 0}>Clear</SubtleButton>
-                  <div style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
-                    <SubtleButton onClick={undo} disabled={!canUndo}><FaUndo /> Undo</SubtleButton>
-                    <SubtleButton onClick={redo} disabled={!canRedo}><FaRedo /> Redo</SubtleButton>
-                    <SubtleButton onClick={() => exportData()}><FaSignOutAlt /> Export</SubtleButton>
-                    <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
-                      <SubtleButton as="span"><FaFileImport /> Import</SubtleButton>
-                      <input ref={importFileRef} type="file" accept="application/json" onChange={handleImportChange} style={{ display: 'none' }} />
-                    </label>
-                  </div>
-                </Row>
+              <div
+                className="hint-bar"
+                style={{
+                  display: "none",
+                  color: theme.subtleText,
+                  fontSize: 12,
+                  textAlign: "center",
+                  marginTop: 6,
+                }}
+              >
+                Tip: Long press tasks to select multiple on mobile 📱
+              </div>
 
-                <div style={{ marginTop: 12 }}>
+              {/* Task list */}
+              <div style={{ marginTop: 10 }}>
+                <AnimatePresence>
+                  {filteredTasks.length === 0 && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      style={{
+                        color: theme.subtleText,
+                        padding: "12px 4px",
+                        textAlign: "center",
+                        fontSize: 14,
+                      }}
+                    >
+                      {tasksStorage.length === 0
+                        ? "Add a task to get started!"
+                        : "No tasks match your filter."}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <ul
+                  style={{
+                    listStyle: "none",
+                    padding: 0,
+                    margin: "12px 0 0 0",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 8,
+                  }}
+                >
                   <AnimatePresence>
-                    {filteredTasks.length === 0 && (
-                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ color: theme.subtleText, padding: '12px 4px' }}>
-                        {tasksStorage.length === 0 ? "Add a task to get started!" : "No tasks match your filter."}
-                      </motion.div>
-                    )}
+                    {filteredTasks.map((t) => (
+                      <TaskItem
+                        key={t.id}
+                        task={t}
+                        projectColor={projectColorMap[t.projectId]}
+                        onToggle={toggleTask}
+                        onDelete={(task) => {
+                          if (window.confirm("Delete task?")) deleteTask(task);
+                        }}
+                        onEdit={(task) => setEditingTask(task)}
+                        onToggleStar={toggleStar}
+                        onToggleSelect={toggleSelectTask}
+                        isSelected={selectedTaskIds.includes(t.id)}
+                        isOverdue={isOverdue(t.dueDate) && !t.done}
+                        compact={compact}
+                      />
+                    ))}
                   </AnimatePresence>
+                </ul>
+              </div>
+            </GlassCard>
+          </CenterColumn>
 
-                  <ul style={{ listStyle: 'none', padding: 0, marginTop: 8 }}>
-                    <AnimatePresence>
-                      {filteredTasks.map((t) => (
-                        <TaskItem
-                          key={t.id}
-                          task={t}
-                          projectColor={projectColorMap[t.projectId]}
-                          onToggle={toggleTask}
-                          onDelete={(task) => { if (window.confirm("Delete task?")) deleteTask(task); }}
-                          onEdit={(task) => setEditingTask(task)}
-                          onToggleStar={toggleStar}
-                          onToggleSelect={toggleSelectTask}
-                          isSelected={selectedTaskIds.includes(t.id)}
-                          isOverdue={isOverdue(t.dueDate) && !t.done}
-                          compact={compact}
-                        />
-                      ))}
-                    </AnimatePresence>
-                  </ul>
-                </div>
-              </GlassCard>
+          {/* Right column hidden on mobile */}
+          <RightColumn className="RightColumn">
+            <PomodoroTimer onComplete={handlePomodoroComplete} />
+            <NotesPad />
+            <DailyGoal tasks={tasksStorage} />
+            <Row>
+              <SubtleButton
+                onClick={() => setShowStats((s) => !s)}
+                style={{ flex: 1, opacity: showStats ? 1 : 0.6 }}
+              >
+                {showStats ? "Hide Stats" : "Show Stats"}
+              </SubtleButton>
+              <SubtleButton
+                onClick={() => setShowSettings((s) => !s)}
+                style={{ flex: 1, opacity: showSettings ? 1 : 0.6 }}
+              >
+                {showSettings ? "Hide Settings" : "Show Settings"}
+              </SubtleButton>
+            </Row>
 
-            </CenterColumn>
+            <AnimatePresence>
+              {showStats && (
+                <StatsPanel tasks={tasksStorage} streak={streak} />
+              )}
+            </AnimatePresence>
+            <AnimatePresence>
+              {showSettings && (
+                <SettingsPanel
+                  themeMode={themeMode}
+                  setThemeMode={setThemeMode}
+                  notifyEnabled={notifyEnabled}
+                  setNotifyEnabled={setNotifyEnabled}
+                  compact={compact}
+                  setCompact={setCompact}
+                />
+              )}
+            </AnimatePresence>
+          </RightColumn>
+        </MainLayout>
 
-            <RightColumn>
-              <PomodoroTimer onComplete={handlePomodoroComplete} />
-              <NotesPad />
-              <DailyGoal tasks={tasksStorage} />
-              <Row>
-                <SubtleButton onClick={() => setShowStats(s => !s)} style={{ flex: 1, opacity: showStats ? 1 : 0.6 }}>{showStats ? "Hide Stats" : "Show Stats"}</SubtleButton>
-                <SubtleButton onClick={() => setShowSettings(s => !s)} style={{ flex: 1, opacity: showSettings ? 1 : 0.6 }}>{showSettings ? "Hide Settings" : "Show Settings"}</SubtleButton>
-              </Row>
+        {/* Footer */}
+        <div
+          style={{
+            fontSize: 14,
+            color: theme.subtleText,
+            padding: "16px 0",
+            textAlign: "center",
+          }}
+        >
+          Made with ❤️ by JayShinde.
+        </div>
 
-              <AnimatePresence>{ showStats && <StatsPanel tasks={tasksStorage} streak={streak} /> }</AnimatePresence>
-              <AnimatePresence>{ showSettings && <SettingsPanel themeMode={themeMode} setThemeMode={setThemeMode} notifyEnabled={notifyEnabled} setNotifyEnabled={setNotifyEnabled} compact={compact} setCompact={setCompact} /> }</AnimatePresence>
-            </RightColumn>
+        {/* ===== MODALS ===== */}
+        <AnimatePresence>
+          {editingTask && (
+            <TaskDetailModal
+              task={editingTask}
+              projects={projects}
+              onClose={() => setEditingTask(null)}
+              onSave={(updatedTask) => {
+                saveTask(updatedTask);
+                setEditingTask(null);
+              }}
+            />
+          )}
+        </AnimatePresence>
 
-          </MainLayout>
+        <AnimatePresence>
+          {tabletProjectView && (
+            <ModalBackdrop
+              onClick={() => setTabletProjectView(false)}
+              style={{
+                justifyContent: "flex-start",
+                alignItems: "flex-start",
+                background: "rgba(0,0,0,0.28)",
+              }}
+            >
+              <div
+                style={{
+                  padding: 18,
+                  paddingTop: "calc(var(--nav-height-desktop) + 12px)",
+                  width: 320,
+                }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <ProjectSidebar
+                  projects={projects}
+                  selectedId={selectedProjectId}
+                  onSelect={(id) => {
+                    setSelectedProjectId(id);
+                    setTabletProjectView(false);
+                  }}
+                  onAddProject={addProject}
+                  onDeleteProject={deleteProject}
+                />
+              </div>
+            </ModalBackdrop>
+          )}
+        </AnimatePresence>
 
-          {/* Footer credit */}
-          <div style={{ fontSize: 14, color: theme.subtleText, padding: '16px 0' }}>Made with ❤️ by JayShinde.</div>
+        {/* ===== MOBILE NAV ===== */}
+        <MobileNav initial={{ y: 60 }} animate={{ y: 0 }}>
+          <MobileNavButton
+            $active={mobileView === "tasks"}
+            onClick={() => setMobileView("tasks")}
+          >
+            <FaTasks /> Tasks
+          </MobileNavButton>
+          <MobileNavButton
+            $active={mobileView === "projects"}
+            onClick={() => handleMobileNav("projects")}
+          >
+            <FaProjectDiagram /> Projects
+          </MobileNavButton>
+          <MobileNavButton
+            onClick={() => handleMobileNav("add")}
+            style={{
+              background: theme.accentGradient,
+              color: "#fff",
+              padding: 10,
+              borderRadius: 999,
+              transform: "translateY(-8px)",
+              boxShadow: "0 8px 20px rgba(0,0,0,0.18)",
+            }}
+          >
+            <FaPlus /> Add
+          </MobileNavButton>
+          <MobileNavButton
+            $active={mobileView === "utils"}
+            onClick={() => handleMobileNav("utils")}
+          >
+            <FaClock /> Utils
+          </MobileNavButton>
+          <MobileNavButton
+            $active={mobileView === "settings"}
+            onClick={() => handleMobileNav("settings")}
+          >
+            <FaCog /> Settings
+          </MobileNavButton>
+        </MobileNav>
 
-          {/* Modals */}
-          <AnimatePresence>
-            {editingTask && (
-              <TaskDetailModal task={editingTask} projects={projects} onClose={() => setEditingTask(null)} onSave={(updatedTask) => { saveTask(updatedTask); setEditingTask(null); }} />
-            )}
-          </AnimatePresence>
+        <AnimatePresence>
+          {mobileView !== "tasks" && <RenderMobileModal />}
+        </AnimatePresence>
 
-          {/* Tablet Project Modal */}
-          <AnimatePresence>
-            {tabletProjectView && (
-              <ModalBackdrop onClick={() => setTabletProjectView(false)} style={{ justifyContent: 'flex-start', alignItems: 'flex-start', background: 'rgba(0,0,0,0.28)' }}>
-                <div style={{ padding: 18, paddingTop: 'calc(var(--nav-height-desktop) + 12px)', width: 320 }} onClick={(e) => e.stopPropagation()}>
-                  <ProjectSidebar projects={projects} selectedId={selectedProjectId} onSelect={(id) => { setSelectedProjectId(id); setTabletProjectView(false); }} onAddProject={addProject} onDeleteProject={deleteProject} />
-                </div>
-              </ModalBackdrop>
-            )}
-          </AnimatePresence>
+        {/* Global responsive CSS */}
+        <style>{`
+          @media (max-width: 768px) {
+            .MainLayout {
+              flex-direction: column !important;
+              gap: 12px !important;
+            }
+            .LeftColumn, .RightColumn {
+              display: none !important;
+            }
+            .CenterColumn {
+              width: 100% !important;
+              padding: 0 !important;
+            }
+            .HeaderCard {
+              padding: 14px 16px !important;
+            }
+            input#quick-add-input {
+              width: 100% !important;
+              flex: 1 1 100%;
+            }
+            .bulk-action-row {
+              overflow-x: auto;
+              white-space: nowrap;
+              scrollbar-width: thin;
+            }
+            .bulk-action-row button {
+              flex: 0 0 auto;
+            }
+            .hint-bar {
+              display: block !important;
+            }
+          }
 
-          {/* Mobile nav */}
-          <MobileNav initial={{ y: 60 }} animate={{ y: 0 }}>
-            <MobileNavButton $active={mobileView === 'tasks'} onClick={() => setMobileView('tasks')}><FaTasks /> Tasks</MobileNavButton>
-            <MobileNavButton $active={mobileView === 'projects'} onClick={() => handleMobileNav('projects')}><FaProjectDiagram /> Projects</MobileNavButton>
-            <MobileNavButton onClick={() => handleMobileNav('add')} style={{ background: theme.accentGradient, color: '#fff', padding: 10, borderRadius: 999, transform: 'translateY(-8px)', boxShadow: '0 8px 20px rgba(0,0,0,0.18)' }}><FaPlus /> Add</MobileNavButton>
-            <MobileNavButton $active={mobileView === 'utils'} onClick={() => handleMobileNav('utils')}><FaClock /> Utils</MobileNavButton>
-            <MobileNavButton $active={mobileView === 'settings'} onClick={() => handleMobileNav('settings')}><FaCog /> Settings</MobileNavButton>
-          </MobileNav>
+          @media (max-width: 480px) {
+            .bulk-action-row {
+              flex-direction: column !important;
+              align-items: stretch !important;
+            }
+            .bulk-action-row button {
+              width: 100% !important;
+            }
+          }
+        `}</style>
+      </AppContainer>
+    </ThemeProvider>
+  </ThemeProviderContext.Provider>
+);
 
-          {/* Mobile modal render */}
-          <AnimatePresence>
-            {mobileView !== 'tasks' && <RenderMobileModal />}
-          </AnimatePresence>
-
-        </AppContainer>
-      </ThemeProvider>
-    </ThemeProviderContext.Provider>
-  );
 }
